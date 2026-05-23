@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exercise Catalog{% endblock %}
+
+{% block body %}
+<div class="page">
+    <header class="page__header">
+        <h1>Exercise Catalog</h1>
+        <p>Pick a category, browse exercises, and log your activity.</p>
+    </header>
+
+    <section class="section">
+        <h2>Categories</h2>
+        <div class="category-grid">
+            {% for category in categories %}
+                <a class="category-card" href="{{ path('app_exercise_category', { category: category }) }}">
+                    <span class="category-card__title">{{ category|title }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section__header">
+            <h2>All Exercises</h2>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a class="btn" href="{{ path('app_exercise_new') }}">Add Exercise</a>
+            {% endif %}
+        </div>
+        <div class="exercise-grid">
+            {% for exercise in catalog %}
+                {% include 'exercise/_exercise_card.html.twig' with { exercise: exercise } %}
+            {% else %}
+                <p>No exercises in the catalog yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section" id="log-form">
+        <h2>Log Exercise</h2>
+        {% if logForm is defined %}
+            {{ form_start(logForm, { 'action': path('app_exercise_log_add') }) }}
+                <div class="form-grid">
+                    {{ form_row(logForm.exercise, { attr: { 'data-log-select': 'exercise' } }) }}
+                    {{ form_row(logForm.duration) }}
+                    {{ form_row(logForm.caloriesBurned) }}
+                </div>
+                <button class="btn" type="submit">Save Log</button>
+            {{ form_end(logForm) }}
+        {% else %}
+            <p>Sign in to log an exercise.</p>
+        {% endif %}
+    </section>
+
+    <section class="section">
+        <h2>Recent Logs</h2>
+        <div class="log-list">
+            {% for log in recentLogs %}
+                {% include 'exercise/_log_row.html.twig' with { log: log } %}
+            {% else %}
+                <p>No recent logs yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

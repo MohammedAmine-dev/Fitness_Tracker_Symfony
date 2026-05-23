@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExerciseLogRepository;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExerciseLogRepository::class)]
 #[ORM\Table(name: 'exercise_logs')]
@@ -16,35 +16,86 @@ class ExerciseLog
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $exerciseName = null;
+    #[ORM\ManyToOne(targetEntity: Exercise::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Exercise $exercise = null;
 
     #[ORM\Column]
+    #[Assert\Positive]
     private ?int $duration = null;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero]
     private ?int $caloriesBurned = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    #[ORM\Column(type: 'date_immutable')]
+    private ?\DateTimeImmutable $date = null;
 
-    public function getId(): ?int { return $this->id; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getUser(): ?User { return $this->user; }
-    public function setUser(?User $user): static { $this->user = $user; return $this; }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
 
-    public function getExerciseName(): ?string { return $this->exerciseName; }
-    public function setExerciseName(string $exerciseName): static { $this->exerciseName = $exerciseName; return $this; }
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
 
-    public function getDuration(): ?int { return $this->duration; }
-    public function setDuration(int $duration): static { $this->duration = $duration; return $this; }
+        return $this;
+    }
 
-    public function getCaloriesBurned(): ?int { return $this->caloriesBurned; }
-    public function setCaloriesBurned(int $caloriesBurned): static { $this->caloriesBurned = $caloriesBurned; return $this; }
+    public function getExercise(): ?Exercise
+    {
+        return $this->exercise;
+    }
 
-    public function getDate(): ?\DateTimeInterface { return $this->date; }
-    public function setDate(\DateTimeInterface $date): static { $this->date = $date; return $this; }
+    public function setExercise(Exercise $exercise): self
+    {
+        $this->exercise = $exercise;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getCaloriesBurned(): ?int
+    {
+        return $this->caloriesBurned;
+    }
+
+    public function setCaloriesBurned(int $caloriesBurned): self
+    {
+        $this->caloriesBurned = $caloriesBurned;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeImmutable
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeImmutable $date): self
+    {
+        $this->date = $date;
+
+        return $this;
+    }
 }

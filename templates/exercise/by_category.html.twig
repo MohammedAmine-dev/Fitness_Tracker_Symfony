@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category|title }} Exercises{% endblock %}
+
+{% block body %}
+<div class="page">
+    <header class="page__header">
+        <h1>{{ category|title }} Exercises</h1>
+        <p>Choose an exercise from the catalog and log your session.</p>
+        <a class="link" href="{{ path('app_exercise') }}">Back to all exercises</a>
+    </header>
+
+    <section class="section">
+        <h2>Exercises</h2>
+        <div class="exercise-grid">
+            {% for exercise in exercises %}
+                {% include 'exercise/_exercise_card.html.twig' with { exercise: exercise } %}
+            {% else %}
+                <p>No exercises found in this category.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section" id="log-form">
+        <h2>Log Exercise</h2>
+        {% if logForm is defined %}
+            {{ form_start(logForm, { 'action': path('app_exercise_log_add') }) }}
+                <div class="form-grid">
+                    {{ form_row(logForm.exercise, { attr: { 'data-log-select': 'exercise' } }) }}
+                    {{ form_row(logForm.duration) }}
+                    {{ form_row(logForm.caloriesBurned) }}
+                </div>
+                <button class="btn" type="submit">Save Log</button>
+            {{ form_end(logForm) }}
+        {% else %}
+            <p>Sign in to log an exercise.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

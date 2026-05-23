@@ -1,11 +1,74 @@
 <?php
+
 namespace App\Repository;
 
-class ExerciseLogRepository
-{
-    // Stub for Member 5's work
-    public function countWorkoutsThisWeek($user): int
+use App\Entity\ExerciseLog;
+use App\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<ExerciseLog>
+    }
+
+    public function __construct(ManagerRegistry $registry)
     {
-        return 2; // dummy value
+        parent::__construct($registry, ExerciseLog::class);
+    }
+<<<<<<< HEAD
+=======
+
+    /**
+     * @return ExerciseLog[]
+     */
+    public function findByUserAndDate(User $user, \DateTimeInterface $date): array
+    {
+        return $this->createQueryBuilder('el')
+            ->where('el.user = :user')
+            ->andWhere('el.date = :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->orderBy('el.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function sumCaloriesBurnedForDay(User $user, \DateTimeInterface $date): int
+    {
+        return (int) $this->createQueryBuilder('el')
+            ->select('COALESCE(SUM(el.caloriesBurned), 0)')
+            ->where('el.user = :user')
+            ->andWhere('el.date = :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countForDay(User $user, \DateTimeInterface $date): int
+    {
+        return (int) $this->createQueryBuilder('el')
+            ->select('COUNT(el.id)')
+            ->where('el.user = :user')
+            ->andWhere('el.date = :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return ExerciseLog[]
+     */
+    public function findRecentByUser(User $user, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('el')
+            ->where('el.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('el.date', 'DESC')
+            ->addOrderBy('el.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }

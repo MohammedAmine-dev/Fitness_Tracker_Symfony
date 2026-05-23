@@ -1,0 +1,14 @@
+<div class="log-row">
+    <div>
+        <strong>{{ log.exercise.name }}</strong>
+        <span class="log-row__date">{{ log.date|date('Y-m-d') }}</span>
+    </div>
+    <div class="log-row__meta">
+        <span>{{ log.duration }} min</span>
+        <span>{{ log.caloriesBurned }} kcal</span>
+    </div>
+    <form method="post" action="{{ path('app_exercise_log_delete', { id: log.id }) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete_log_' ~ log.id) }}">
+        <button class="btn btn--danger" type="submit">Delete</button>
+    </form>
+</div>

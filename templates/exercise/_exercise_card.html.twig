@@ -1,0 +1,15 @@
+<article class="exercise-card">
+    <div class="exercise-card__header">
+        <h3>{{ exercise.name }}</h3>
+        <span class="tag">{{ exercise.category|title }}</span>
+    </div>
+    {% if exercise.description %}
+        <p class="exercise-card__description">{{ exercise.description }}</p>
+    {% endif %}
+    <div class="exercise-card__actions">
+        <button class="btn btn--light" type="button" data-log-exercise data-exercise-id="{{ exercise.id }}">Log this</button>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="link" href="{{ path('app_exercise_edit', { id: exercise.id }) }}">Edit</a>
+        {% endif %}
+    </div>
+</article>

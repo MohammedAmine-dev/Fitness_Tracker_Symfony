@@ -11,7 +11,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
+<<<<<<< HEAD
 class DashboardController extends AbstractController
+=======
+#[Route('/dashboard', name:'dashboard')]class DashboardController extends AbstractController
+>>>>>>> origin/dashboard
 {
     public function __construct(
         private readonly MealRepository         $mealRepository,
@@ -19,7 +23,11 @@ class DashboardController extends AbstractController
         private readonly GoalRepository         $calorieGoalRepository, // Type GoalRepository !
     ) {}
 
+<<<<<<< HEAD
     #[Route('/dashboard', name: 'app_dashboard')]
+=======
+    #[Route('/', name: 'app_dashboard')]
+>>>>>>> origin/dashboard
     public function index(): Response
     {
         /** @var \App\Entity\User $user */

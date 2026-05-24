@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\Exercise;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use App\Entity\User;
 /**
  * @extends ServiceEntityRepository<Exercise>
  */
@@ -43,5 +43,21 @@ class ExerciseRepository extends ServiceEntityRepository
             ->orderBy('e.name', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+    public function totalCaloriesBurned(User $user, \DateTimeInterface $dateToSearch): int
+    {
+        $begin = (clone $dateToSearch)->setTime(0, 0, 0);
+        $end   = (clone $dateToSearch)->setTime(23, 59, 59);
+
+        return (int) $this->createQueryBuilder('e')
+            ->select('SUM(e.calories)') // Vérifie que ta propriété s'appelle bien "calories"
+            ->andWhere('e.user = :user')
+            ->andWhere('e.date >= :begin') // Vérifie que ta propriété s'appelle bien "date"
+            ->andWhere('e.date <= :end')
+            ->setParameter('user', $user)
+            ->setParameter('begin', $begin)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

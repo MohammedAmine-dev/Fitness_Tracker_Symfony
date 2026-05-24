@@ -34,6 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+<<<<<<< HEAD
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -49,6 +50,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     // ── Roles ─────────────────────────────────────────────────────────────────
 
+=======
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    public function getId(): ?int { return $this->id; }
+    public function getEmail(): ?string { return $this->email; }
+    public function setEmail(string $email): self { $this->email = $email; return $this; }
+    public function getUserIdentifier(): string { return (string) $this->email; }
+>>>>>>> origin/dashboard
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -57,6 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
+<<<<<<< HEAD
 
     public function setRoles(array $roles): static
     {
@@ -91,6 +102,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+=======
+    public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
+    public function getPassword(): string { return $this->password; }
+    public function setPassword(string $password): self { $this->password = $password; return $this; }
+    public function eraseCredentials(): void {}
+>>>>>>> origin/dashboard
 
     public function getName(): ?string
     {
@@ -103,6 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+<<<<<<< HEAD
 
     public function getEmail(): ?string
     {
@@ -127,4 +145,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+=======
+>>>>>>> origin/dashboard
 }

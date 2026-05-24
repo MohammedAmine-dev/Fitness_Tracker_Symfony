@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-#[Route('/diary')]
+#[Route('/diary', name:'diary')]
 class DiaryController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $em) {}

@@ -29,13 +29,13 @@ class RegistrationFormType extends AbstractType
                     'autofocus'   => true,
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Please enter your name.']),
-                    new Length([
-                        'min'        => 2,
-                        'max'        => 100,
-                        'minMessage' => 'Your name must be at least {{ limit }} characters.',
-                        'maxMessage' => 'Your name cannot exceed {{ limit }} characters.',
-                    ]),
+                    new NotBlank(message: 'Please enter your name.'),
+                    new Length(
+                        min: 2,
+                        max: 100,
+                        minMessage: 'Your name must be at least {{ limit }} characters.',
+                        maxMessage: 'Your name cannot exceed {{ limit }} characters.',
+                    ),
                 ],
             ])
             ->add('email', EmailType::class, [
@@ -45,8 +45,8 @@ class RegistrationFormType extends AbstractType
                     'placeholder' => 'you@example.com',
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Please enter your email.']),
-                    new Email(['message' => 'Please enter a valid email address.']),
+                    new NotBlank(message: 'Please enter your email.'),
+                    new Email(message: 'Please enter a valid email address.'),
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -60,12 +60,12 @@ class RegistrationFormType extends AbstractType
                         'autocomplete'=> 'new-password',
                     ],
                     'constraints' => [
-                        new NotBlank(['message' => 'Please enter a password.']),
-                        new Length([
-                            'min'        => 8,
-                            'minMessage' => 'Your password must be at least {{ limit }} characters.',
-                            'max'        => 4096, // Symfony's max for BCrypt safety
-                        ]),
+                        new NotBlank(message: 'Please enter a password.'),
+                        new Length(
+                            min: 8,
+                            max: 4096,
+                            minMessage: 'Your password must be at least {{ limit }} characters.',
+                        ),
                     ],
                 ],
                 'second_options' => [

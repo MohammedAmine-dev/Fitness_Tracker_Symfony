@@ -1,0 +1,262 @@
+{# templates/dashboard/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}FitTrack | Dashboard{% endblock %}
+{% block meta_description %}FitTrack Dashboard - Track your daily calories, meals, exercises, and nutrition goals.{% endblock %}
+{% block stylesheets  %} <link rel="stylesheet" href="{{ asset('styles/styles.css') }}">{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block body %}
+
+    {# ── HEADER ──────────────────────────────────────────────────────────────── #}
+    <div class="main__header">
+        <h1 class="main__title">Dashboard</h1>
+        <p class="main__subtitle">
+            {{ today|date('l, F d, Y') }} — Welcome back, {{ user.name }}!
+        </p>
+    </div>
+
+    {# ── STAT CARDS ──────────────────────────────────────────────────────────── #}
+    <div class="stats-grid">
+
+    <div class="stat-card animate-in">
+        <div class="stat-card__icon stat-card__icon--blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>
+            </svg>
+        </div>
+        <div class="stat-card__info">
+            <div class="stat-card__label">Calories Remaining</div>
+            <div class="stat-card__value" data-count="{{ remainingCalories }}">0</div>
+            <div class="stat-card__change stat-card__change--up">&uarr; On track</div>
+        </div>
+    </div>
+
+    <div class="stat-card animate-in">
+        <div class="stat-card__icon stat-card__icon--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/>
+                <line x1="10" y1="1" x2="10" y2="4"/>
+                <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+        </div>
+        <div class="stat-card__info">
+            <div class="stat-card__label">Calories Consumed</div>
+            <div class="stat-card__value" data-count="{{ caloriesConsumed }}">0</div>
+            <div class="stat-card__change stat-card__change--up" style="color: {{ vsYesterdayLabelColor }};">
+                &uarr; {{ vsYesterdayPercentage }}% vs yesterday
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card animate-in">
+        <div class="stat-card__icon stat-card__icon--red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+        </div>
+        <div class="stat-card__info">
+            <div class="stat-card__label">Calories Burned</div>
+            <div class="stat-card__value" data-count="{{ caloriesBurned }}">0</div>
+            <div class="stat-card__change stat-card__change--up">&uarr; Great pace!</div>
+        </div>
+    </div>
+
+    <div class="stat-card animate-in">
+        <div class="stat-card__icon stat-card__icon--orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+        </div>
+        <div class="stat-card__info">
+            <div class="stat-card__label">Steps Today</div>
+            <div class="stat-card__value" data-count="{{ steps }}">0</div>
+            <div class="stat-card__change stat-card__change--up">&uarr; {{ stepsPercentage }}% of goal</div>
+        </div>
+    </div>
+
+    </div>{# /stats-grid #}
+
+    {# ── PROGRESS SECTION ────────────────────────────────────────────────────── #}
+    <div class="progress-section">
+
+    {# Calorie Ring #}
+    <div class="card card--flat animate-in">
+        <div class="card__header">
+            <div>
+                <h2 class="card__title">Calorie Budget</h2>
+                <p class="card__subtitle">Daily target: {{ calorieBudget|number_format }} kcal</p>
+            </div>
+        </div>
+        <div class="calorie-ring">
+            <svg class="calorie-ring__svg" viewBox="0 0 180 180">
+                <circle class="calorie-ring__bg" cx="90" cy="90" r="80"/>
+                <circle class="calorie-ring__fill"
+                        {% if ringOverDone %}style="stroke:#1fb382"{% endif %}
+                        cx="90" cy="90" r="80"
+                        data-percent="{{ ringPercent }}"/>
+            </svg>
+            <div class="calorie-ring__center">
+                <div class="calorie-ring__number">{{ remainingCalories }}</div>
+                <div class="calorie-ring__text">{{ ringOverDone ? 'done' : 'remaining' }}</div>
+            </div>
+            <div class="calorie-ring__footer">
+                <div class="calorie-ring__item">
+                    <span class="calorie-ring__item-value">{{ calorieBudget|number_format }}</span>
+                    <span class="calorie-ring__item-label">Goal</span>
+                </div>
+                <div class="calorie-ring__item">
+                    <span class="calorie-ring__item-value">{{ caloriesConsumed }}</span>
+                    <span class="calorie-ring__item-label">Food</span>
+                </div>
+                <div class="calorie-ring__item">
+                    <span class="calorie-ring__item-value">{{ caloriesBurned }}</span>
+                    <span class="calorie-ring__item-label">Exercise</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Macronutrients #}
+    <div class="card card--flat animate-in">
+        <div class="card__header">
+            <div>
+                <h2 class="card__title">Macronutrients</h2>
+                <p class="card__subtitle">Daily breakdown</p>
+            </div>
+        </div>
+
+        <div class="progress-bar-group">
+            <div class="progress-bar__header">
+                <span class="progress-bar__label">🥩 Protein</span>
+                <span class="progress-bar__value">{{ protein }}g / 150g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar__fill progress-bar__fill--blue"
+                     data-width="{{ (protein * 100 / 150)|round }}"></div>
+            </div>
+        </div>
+
+        <div class="progress-bar-group">
+            <div class="progress-bar__header">
+                <span class="progress-bar__label">🍞 Carbs</span>
+                <span class="progress-bar__value">{{ carbs }}g / 300g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar__fill progress-bar__fill--orange"
+                     data-width="{{ (carbs * 100 / 300)|round }}"></div>
+            </div>
+        </div>
+
+        <div class="progress-bar-group">
+            <div class="progress-bar__header">
+                <span class="progress-bar__label">🥑 Fat</span>
+                <span class="progress-bar__value">{{ fat }}g / 80g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar__fill progress-bar__fill--red"
+                     data-width="{{ (fat * 100 / 80)|round }}"></div>
+            </div>
+        </div>
+    </div>
+
+    </div>{# /progress-section #}
+
+    {# ── MEALS ───────────────────────────────────────────────────────────────── #}
+    <div class="card__header mb-8">
+        <h2 class="card__title" style="font-size:20px;">Today's Meals</h2>
+    </div>
+
+    <div class="meals-grid">
+
+    {# Breakfast #}
+    {{ _self.meal_card('🌅', 'Breakfast', breakfastMeals, breakfastCalories, 'No meals logged yet') }}
+
+    {# Lunch #}
+    {{ _self.meal_card('☀️', 'Lunch', lunchMeals, lunchCalories, 'No meals logged yet') }}
+
+    {# Dinner #}
+    {{ _self.meal_card('🌙', 'Dinner', dinnerMeals, dinnerCalories, 'No meals logged yet') }}
+
+    {# Snacks #}
+    {{ _self.meal_card('🍎', 'Snacks', snackMeals, snackCalories, 'No snacks logged yet') }}
+
+    </div>{# /meals-grid #}
+
+    {# ── EXERCISE SUMMARY ────────────────────────────────────────────────────── #}
+    <div class="card card--flat animate-in mb-28" style="margin-top: 28px;">
+        <div class="card__header">
+            <div>
+                <h2 class="card__title">Exercise Summary</h2>
+                <p class="card__subtitle">Today's activities</p>
+            </div>
+        </div>
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Exercise</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Calories</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for exercise in exercises %}
+                <tr>
+                    <td><strong>{{ exercise.exerciseName }}</strong></td>
+                    <td>
+              <span class="table-tag table-tag--{{ exercise.exerciseType|lower|default('cardio') }}">
+                {{ exercise.exerciseType|default('Cardio') }}
+              </span>
+                    </td>
+                    <td>{{ exercise.duration }} min</td>
+                    <td><strong>{{ exercise.caloriesBurned }} kcal</strong></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" style="text-align:center; color: var(--text-muted, #888); padding: 20px 0;">
+                        No exercises logged today
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+{# ── MACRO: reusable meal card ────────────────────────────────────────────── #}
+{% macro meal_card(emoji, label, meals, totalCals, emptyMsg) %}
+    <div class="meal-card animate-in">
+        <div class="meal-card__header">
+            <div class="meal-card__type">
+                <span class="meal-card__emoji">{{ emoji }}</span>
+                <div>
+                    <div class="meal-card__name">{{ label }}</div>
+                    <div class="meal-card__cals">{{ totalCals }} kcal</div>
+                </div>
+            </div>
+            <button class="meal-card__add-btn" title="Add food">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+        </div>
+
+        {% if meals|length == 0 %}
+            <div class="meal-card__empty">{{ emptyMsg }}</div>
+        {% else %}
+            {% for meal in meals %}
+                <div class="meal-card__items">
+                    <div class="meal-card__item">
+                        <span class="meal-card__item-name">{{ meal.foodName }}</span>
+                        <span class="meal-card__item-cal">{{ meal.calories }} kcal</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}

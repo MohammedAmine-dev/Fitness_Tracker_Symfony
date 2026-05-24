@@ -16,6 +16,12 @@ class GoalRepository extends ServiceEntityRepository
         parent::__construct($registry, Goal::class);
     }
 
+    public function getDailyCalories(\App\Entity\User $user): ?int
+    {
+        $goal = $this->findOneBy(['user' => $user]);
+        return $goal ? $goal->getDailyCalories() : null;
+    }
+
     //    /**
     //     * @return Goal[] Returns an array of Goal objects
     //     */

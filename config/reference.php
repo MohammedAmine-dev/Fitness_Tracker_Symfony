@@ -348,6 +348,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             services?: list<scalar|Param|null>,
  *         }>,
  *     },
+ *     serializer?: bool|array{ // Serializer configuration
+ *         enabled?: bool|Param, // Default: true
 <<<<<<< HEAD
 =======
  *     annotations?: bool|array{
@@ -418,6 +420,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         log_channel?: scalar|Param|null, // The channel of log message. Null to let Symfony decide. // Default: null
  *     }>,
  *     web_link?: bool|array{ // Web links configuration
+ *         enabled?: bool|Param, // Default: true
  *         enabled?: bool|Param, // Default: true
  *     },
  *     lock?: bool|string|array{ // Lock configuration

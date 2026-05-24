@@ -24,7 +24,7 @@ class ExerciseController extends AbstractController
             'categories' => $service->getCategories(),
             'catalog' => $service->getCatalog(),
             'recentLogs' => $service->getRecentLogs($user),
-            'logForm' => $this->createForm(ExerciseLogType::class, new ExerciseLog()),
+            'logForm' => $this->createForm(ExerciseLogType::class, new ExerciseLog())->createView(),
         ]);
     }
 
@@ -35,7 +35,7 @@ class ExerciseController extends AbstractController
             'category' => $category,
             'categories' => $service->getCategories(),
             'exercises' => $service->getCatalog($category),
-            'logForm' => $this->createForm(ExerciseLogType::class, new ExerciseLog()),
+            'logForm' => $this->createForm(ExerciseLogType::class, new ExerciseLog())->createView(),
         ]);
     }
 
@@ -83,7 +83,7 @@ class ExerciseController extends AbstractController
         }
 
         return $this->render('exercise/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -102,7 +102,7 @@ class ExerciseController extends AbstractController
         }
 
         return $this->render('exercise/edit.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'exercise' => $exercise,
         ]);
     }

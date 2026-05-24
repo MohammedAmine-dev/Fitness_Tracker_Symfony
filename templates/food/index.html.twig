@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FitTrack | Food{% endblock %}
+
+{% block meta_description %}FitTrack Food — Search and browse foods with nutrition details.{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+{% endblock %}
+
+{% block active_food %}active{% endblock %}
+
+{% block body %}
+<div class="main__header">
+    <h1 class="main__title">Food Database</h1>
+    <p class="main__subtitle">Search and browse foods to add to your diary</p>
+    <p class="main__subtitle" style="margin-top: 4px;">{{ meta.total }} foods found</p>
+</div>
+
+{% set currentQuery = query|merge({
+    search: meta.search,
+    category: meta.category,
+    limit: meta.limit
+}) %}
+
+<form method="get" action="{{ path('app_food') }}" class="food-search animate-in">
+    <svg class="food-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+    <input
+        type="text"
+        name="search"
+        value="{{ meta.search }}"
+        placeholder="Search for foods... (e.g. chicken breast, banana, rice)"
+        aria-label="Search foods"
+    >
+    <input type="hidden" name="category" value="{{ meta.category }}">
+    <input type="hidden" name="limit" value="{{ meta.limit }}">
+</form>
+
+<div class="food-filters animate-in">
+    {% for category in categories %}
+        {% set active = meta.category == category or (category == 'All' and meta.category == '') %}
+        <a href="{{ path('app_food', currentQuery|merge({ category: category == 'All' ? '' : category, page: 1 })) }}"
+           class="food-filter-chip{{ active ? ' active' : '' }}">
+            {{ category }}
+        </a>
+    {% endfor %}
+</div>
+
+{% if foods|length == 0 %}
+    <div class="card animate-in" style="padding:24px;color:var(--gray-600);">
+        No foods found. Try a different search or category.
+    </div>
+{% else %}
+    <div class="food-grid" aria-live="polite">
+        {% for food in foods %}
+            <div class="food-card animate-in">
+                <div class="food-card__image" style="padding:0;overflow:hidden;">
+                    <img
+                        src="{{ food.imageUrl ?: 'https://placehold.co/600x400?text=No+Image' }}"
+                        alt="{{ food.name }}"
+                        loading="lazy"
+                        style="width:100%;height:100%;object-fit:cover;"
+                    >
+                </div>
+                <div class="food-card__body">
+                    <div class="food-card__name">{{ food.name }}</div>
+                    <div class="food-card__serving">Serving: {{ food.serving }}</div>
+                    <div class="food-card__serving" style="margin-top:4px;color:var(--primary-dark);font-weight:600;">
+                        {{ food.category }}
+                    </div>
+                    <div class="food-card__macros">
+                        <div class="food-card__macro"><span class="food-card__macro-value">{{ food.calories }}</span><span class="food-card__macro-label">Cal</span></div>
+                        <div class="food-card__macro"><span class="food-card__macro-value">{{ food.protein }}g</span><span class="food-card__macro-label">Protein</span></div>
+                        <div class="food-card__macro"><span class="food-card__macro-value">{{ food.carbs }}g</span><span class="food-card__macro-label">Carbs</span></div>
+                        <div class="food-card__macro"><span class="food-card__macro-value">{{ food.fat }}g</span><span class="food-card__macro-label">Fat</span></div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if meta.total_pages > 1 %}
+    <div class="food-filters" style="margin-top:20px;">
+        {% if meta.page > 1 %}
+            <a class="food-filter-chip" href="{{ path('app_food', currentQuery|merge({ page: meta.page - 1 })) }}">Previous</a>
+        {% endif %}
+
+        <span class="food-filter-chip active">Page {{ meta.page }} of {{ meta.total_pages }}</span>
+
+        {% if meta.page < meta.total_pages %}
+            <a class="food-filter-chip" href="{{ path('app_food', currentQuery|merge({ page: meta.page + 1 })) }}">Next</a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

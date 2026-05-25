@@ -25,11 +25,6 @@ class DashboardController extends AbstractController
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $user = $this->mealRepository->getEntityManager()
-            ->getRepository(\App\Entity\User::class)
-            ->findOneBy([]);
-
-        // Si tu n'as aucun utilisateur en base de données pour le test :
         if (!$user) {
             return new Response("Attention : Tu dois créer au moins un utilisateur dans ta table 'user' pour tester le dashboard !");
         }

@@ -118,11 +118,16 @@ class DiaryController extends AbstractController
     }
 
     #[Route('/meal/delete/{id}', name: 'app_diary_delete_meal', methods: ['POST'])]
-    public function deleteMeal(int $id): JsonResponse
+    public function deleteMeal(Request $request, int $id): JsonResponse
     {
         $meal = $this->em->getRepository(Meal::class)->find($id);
 
         if (!$meal || $meal->getUser() !== $this->getUser()) {
+            return $this->json(['success' => false], 403);
+        }
+
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_meal_' . $meal->getId(), (string) $token)) {
             return $this->json(['success' => false], 403);
         }
 
@@ -159,11 +164,16 @@ class DiaryController extends AbstractController
     }
 
     #[Route('/exercise/delete/{id}', name: 'app_diary_delete_exercise', methods: ['POST'])]
-    public function deleteExercise(int $id): JsonResponse
+    public function deleteExercise(Request $request, int $id): JsonResponse
     {
         $exercise = $this->em->getRepository(ExerciseLog::class)->find($id);
 
         if (!$exercise || $exercise->getUser() !== $this->getUser()) {
+            return $this->json(['success' => false], 403);
+        }
+
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete_exercise_' . $exercise->getId(), (string) $token)) {
             return $this->json(['success' => false], 403);
         }
 

@@ -133,7 +133,7 @@
                                             <div class="cal-value">{{ meal.calories }}</div>
                                             <div class="cal-unit">kcal</div>
                                         </div>
-                                        <button class="delete-btn" onclick="deleteMeal({{ meal.id }})"><i class="bi bi-trash3"></i></button>
+                                        <button class="delete-btn" onclick="deleteMeal({{ meal.id }}, '{{ csrf_token('delete_meal_' ~ meal.id) }}')"><i class="bi bi-trash3"></i></button>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -159,14 +159,14 @@
                             <div class="diary-entry">
                                 <div class="entry-icon" style="background:var(--accent-green-bg)">🏃</div>
                                 <div>
-                                    <div class="entry-name">{{ ex.exerciseName }}</div>
-                                    <div class="entry-meta"><i class="bi bi-clock me-1"></i>{{ ex.duration }} min</div>
+                                    <div class="entry-name">{{ ex.exercise.name }}</div>
+                                    <div class="entry-meta"><i class="bi bi-clock me-1"></i>{{ ex.exercise.category|capitalize }} · {{ ex.duration }} min</div>
                                 </div>
                                 <div class="entry-cal">
                                     <div class="cal-value" style="color:var(--accent-green)">−{{ ex.caloriesBurned }}</div>
                                     <div class="cal-unit">kcal</div>
                                 </div>
-                                <button class="delete-btn" onclick="deleteExercise({{ ex.id }})"><i class="bi bi-trash3"></i></button>
+                                <button class="delete-btn" onclick="deleteExercise({{ ex.id }}, '{{ csrf_token('delete_exercise_' ~ ex.id) }}')"><i class="bi bi-trash3"></i></button>
                             </div>
                         {% endfor %}
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-2" style="border-top:2px solid var(--gray-100)">
@@ -400,7 +400,7 @@
                     {{ form_start(exerciseForm, {'attr': {'id': 'exerciseFormElement'}}) }}
                     <div class="row g-3">
                         <div class="col-12">
-                            {{ form_row(exerciseForm.exercise, {'id': 'exName', 'row_attr': {'class': 'mb-0'}}) }}
+                            {{ form_row(exerciseForm.exercise, {'attr': {'id': 'exExercise', 'class': 'form-select'}, 'row_attr': {'class': 'mb-0'}}) }}
                         </div>
                         <div class="col-6">
                             {{ form_row(exerciseForm.duration, {'id': 'exDuration', 'row_attr': {'class': 'mb-0'}}) }}
@@ -483,29 +483,30 @@
 
             fetch(URLS.addMeal, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params })
             .then(r => r.json())
-            .then(d => { if (d.success) ; else alert((d.errors || ['Error adding meal']).join('\n')); });
+            .then(d => { if (d.success) location.reload(); else alert((d.errors || ['Error adding meal']).join('\n')); });
         }
 
-            function deleteMeal(id) {
+            function deleteMeal(id, token) {
             if (!confirm('Delete this meal?')) return;
-            fetch(URLS.deleteMeal.replace('__ID__', id), { method: 'POST' })
+            const params = new URLSearchParams({ _token: token });
+            fetch(URLS.deleteMeal.replace('__ID__', id), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params })
             .then(r => r.json()).then(d => { if (d.success) location.reload(); });
         }
 
             /* ── Add Exercise ───────────────────────────────────────────────────────── */
             function submitExercise() {
-            const name = document.getElementById('exName').value.trim();
+            const exerciseId = document.getElementById('exExercise').value;
             const dur  = document.getElementById('exDuration').value;
             const cal  = document.getElementById('exCalories').value;
-            if (!name || !dur || !cal) { alert('Please fill all fields.'); return; }
+            if (!exerciseId || !dur || !cal) { alert('Please fill all fields.'); return; }
 
             const csrfToken = document.querySelector('input[name="exercise_log[_token]"]')?.value || '';
 
             const params = new URLSearchParams({
-            'exercise_log[exerciseName]':   name,
+            'exercise_log[exercise]':       exerciseId,
             'exercise_log[duration]':       dur,
             'exercise_log[caloriesBurned]': cal,
-            'exercise_log[_token]':         csrfToken, // Maintenant cette variable existe !
+            'exercise_log[_token]':         csrfToken,
             date: CURRENT_DATE,
         });
 
@@ -514,9 +515,10 @@
             .then(d => { if (d.success) location.reload(); else alert((d.errors || ['Error adding exercise']).join('\n')); });
         }
 
-            function deleteExercise(id) {
+            function deleteExercise(id, token) {
             if (!confirm('Delete this exercise?')) return;
-            fetch(URLS.deleteExercise.replace('__ID__', id), { method: 'POST' })
+            const params = new URLSearchParams({ _token: token });
+            fetch(URLS.deleteExercise.replace('__ID__', id), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params })
             .then(r => r.json()).then(d => { if (d.success) location.reload(); });
         }
 

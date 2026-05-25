@@ -27,16 +27,6 @@ security:
             custom_authenticators:
                 - App\Security\AppAuthenticator
 
-            form_login:
-                login_path: app_login          # GET  /login
-                check_path: app_login          # POST /login  (same route, Symfony intercepts POST)
-                username_parameter: _username  # matches name="_username" in the template
-                password_parameter: _password  # matches name="_password" in the template
-                csrf_parameter:     _csrf_token
-                csrf_token_id:      authenticate
-                default_target_path: /         # redirect after successful login
-                always_use_default_target_path: false
-
             remember_me:
                 secret:   '%kernel.secret%'
                 lifetime: 2592000              # 30 days in seconds

@@ -1,6 +1,5 @@
 doctrine:
     dbal:
-        schema_filter: ~^(user|goal|weight_log)$~
         mapping_types:
             _text: string
             citext: string
@@ -43,19 +42,18 @@ doctrine:
 when@test:
     doctrine:
         dbal:
-        schema_filter: ~^(user|goal|weight_log)$~
-        mapping_types:
-            _text: string
-            citext: string
-            vector: string
-            _varchar: string
-            _uuid: string
-            _int4: string
-            _int8: string
-            _bpchar: string
-            _float4: string
-            _float8: string
-            _numeric: string
+            mapping_types:
+                _text: string
+                citext: string
+                vector: string
+                _varchar: string
+                _uuid: string
+                _int4: string
+                _int8: string
+                _bpchar: string
+                _float4: string
+                _float8: string
+                _numeric: string
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 

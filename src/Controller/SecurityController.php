@@ -15,7 +15,7 @@ class SecurityController extends AbstractController
     {
         // Already authenticated → redirect to home
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_dashboard');
         }
 
         $form = $this->createForm(LoginFormType::class, null, [

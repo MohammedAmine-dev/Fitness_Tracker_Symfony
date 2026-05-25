@@ -14,7 +14,7 @@
 
         {# Logo #}
         <div class="auth-logo">
-            <div class="logo-icon">🏋️</div>
+            <div class="logo-icon">FT</div>
             <span class="logo-text">Fit<span>Track</span></span>
         </div>
 
@@ -23,7 +23,7 @@
 
         {% if not form.vars.valid and form.vars.submitted %}
             <div class="alert alert-error mb-4" role="alert">
-                <span>⚠</span>
+                    <span>Error</span>
                 <span>Please fix the errors below and try again.</span>
             </div>
         {% endif %}
@@ -37,9 +37,7 @@
 
         {# Full Name #}
         <div class="form-group">
-            <label class="form-label" for="{{ form.name.vars.id }}">
-                Full Name <span class="required" aria-hidden="true">*</span>
-            </label>
+            <label class="form-label" for="{{ form.name.vars.id }}">Full Name <span class="required" aria-hidden="true">*</span></label>
             <div class="form-input-wrapper">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,7 +54,7 @@
             </div>
             {% if not form.name.vars.valid %}
                 {% for error in form.name.vars.errors %}
-                    <span class="form-error" role="alert">⚠ {{ error.message }}</span>
+                        <span class="form-error" role="alert">Error: {{ error.message }}</span>
                 {% endfor %}
             {% endif %}
         </div>
@@ -82,7 +80,7 @@
             </div>
             {% if not form.email.vars.valid %}
                 {% for error in form.email.vars.errors %}
-                    <span class="form-error" role="alert">⚠ {{ error.message }}</span>
+                        <span class="form-error" role="alert">Error: {{ error.message }}</span>
                 {% endfor %}
             {% endif %}
         </div>
@@ -106,8 +104,7 @@
                         'minlength': '8'
                     }
                 }) }}
-                <button type="button" class="input-icon-right" id="togglePassword"
-                        aria-label="Toggle password visibility">👁</button>
+                <button type="button" class="input-icon-right" id="togglePassword" aria-label="Toggle password visibility">Show</button>
             </div>
 
             {# Password strength indicator #}
@@ -123,7 +120,7 @@
 
             {% if not form.plainPassword.vars.valid %}
                 {% for error in form.plainPassword.vars.errors %}
-                    <span class="form-error" role="alert">⚠ {{ error.message }}</span>
+                        <span class="form-error" role="alert">Error: {{ error.message }}</span>
                 {% endfor %}
             {% endif %}
         </div>
@@ -152,13 +149,11 @@
         <div class="form-group mt-2">
             <label class="form-check">
                 {{ form_widget(form.agreeTerms) }}
-                <span class="form-check-label">
-                        I agree to the Terms of Services Privacy Policy
-                    </span>
+                <span class="form-check-label">I agree to the Terms of Service and Privacy Policy</span>
             </label>
             {% if not form.agreeTerms.vars.valid %}
                 {% for error in form.agreeTerms.vars.errors %}
-                    <span class="form-error" role="alert">⚠ {{ error.message }}</span>
+                        <span class="form-error" role="alert">Error: {{ error.message }}</span>
                 {% endfor %}
             {% endif %}
         </div>
@@ -192,7 +187,7 @@
     document.getElementById('togglePassword').addEventListener('click', function () {
         const isText = passInput.type === 'text';
         passInput.type = isText ? 'password' : 'text';
-        this.textContent = isText ? '👁' : '🙈';
+        this.textContent = isText ? 'Show' : 'Hide';
     });
 
     /* --- Password strength meter --- */
@@ -240,7 +235,7 @@
         const span = document.createElement('span');
         span.className = 'form-error js-error';
         span.role = 'alert';
-        span.textContent = '⚠ ' + msg;
+            span.textContent = 'Error: ' + msg;
         input.closest('.form-group').appendChild(span);
     }
 

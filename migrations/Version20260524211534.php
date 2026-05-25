@@ -19,19 +19,38 @@ final class Version20260524211534 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE goal (id INT AUTO_INCREMENT NOT NULL, target_weight DOUBLE PRECISION DEFAULT NULL, daily_calories INT DEFAULT NULL, weekly_workouts INT DEFAULT NULL, user_id INT NOT NULL, UNIQUE INDEX UNIQ_FCDCEB2EA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE weight_log (id INT AUTO_INCREMENT NOT NULL, weight DOUBLE PRECISION NOT NULL, date DATE NOT NULL, user_id INT NOT NULL, INDEX IDX_6BBB9E9CA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('ALTER TABLE goal ADD CONSTRAINT FK_FCDCEB2EA76ED395 FOREIGN KEY (user_id) REFERENCES `user` (id)');
-        $this->addSql('ALTER TABLE weight_log ADD CONSTRAINT FK_6BBB9E9CA76ED395 FOREIGN KEY (user_id) REFERENCES `user` (id)');
+        if (!$schema->hasTable('goal')) {
+            $goal = $schema->createTable('goal');
+            $goal->addColumn('id', 'integer', ['autoincrement' => true]);
+            $goal->setPrimaryKey(['id']);
+            $goal->addColumn('target_weight', 'float', ['notnull' => false]);
+            $goal->addColumn('daily_calories', 'integer', ['notnull' => false]);
+            $goal->addColumn('weekly_workouts', 'integer', ['notnull' => false]);
+            $goal->addColumn('user_id', 'integer', ['notnull' => true]);
+            $goal->addUniqueIndex(['user_id'], 'UNIQ_FCDCEB2EA76ED395');
+            $goal->addForeignKeyConstraint('user', ['user_id'], ['id'], [], 'FK_FCDCEB2EA76ED395');
+        }
+
+        if (!$schema->hasTable('weight_log')) {
+            $weightLog = $schema->createTable('weight_log');
+            $weightLog->addColumn('id', 'integer', ['autoincrement' => true]);
+            $weightLog->setPrimaryKey(['id']);
+            $weightLog->addColumn('weight', 'float', ['notnull' => true]);
+            $weightLog->addColumn('date', 'date', ['notnull' => true]);
+            $weightLog->addColumn('user_id', 'integer', ['notnull' => true]);
+            $weightLog->addIndex(['user_id'], 'IDX_6BBB9E9CA76ED395');
+            $weightLog->addForeignKeyConstraint('user', ['user_id'], ['id'], [], 'FK_6BBB9E9CA76ED395');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE goal DROP FOREIGN KEY FK_FCDCEB2EA76ED395');
-        $this->addSql('ALTER TABLE weight_log DROP FOREIGN KEY FK_6BBB9E9CA76ED395');
-        $this->addSql('DROP TABLE goal');
-        $this->addSql('DROP TABLE weight_log');
+        if ($schema->hasTable('weight_log')) {
+            $schema->dropTable('weight_log');
+        }
+
+        if ($schema->hasTable('goal')) {
+            $schema->dropTable('goal');
+        }
     }
 }

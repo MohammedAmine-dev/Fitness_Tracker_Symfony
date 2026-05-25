@@ -22,15 +22,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
     #[Route('/', name: 'app_dashboard')]
     public function index(): Response
     {
-        /** @var \App\Entity\User $user */
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
-        $user = $this->mealRepository->getEntityManager()
-            ->getRepository(\App\Entity\User::class)
-            ->findOneBy([]);
-
-        // Si tu n'as aucun utilisateur en base de données pour le test :
         if (!$user) {
-            return new Response("Attention : Tu dois créer au moins un utilisateur dans ta table 'user' pour tester le dashboard !");
+            return $this->redirectToRoute('app_login');
         }
         $today     = new \DateTime();
         $yesterday = new \DateTime('-1 day');

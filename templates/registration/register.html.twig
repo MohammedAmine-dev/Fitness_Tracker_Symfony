@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - FitTrack</title>
+    <link rel="stylesheet" href="{{ asset('styles/auth.css') }}">
+</head>
+<body>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="logo-icon">FT</div>
+            <span class="logo-text">Fit<span>Track</span></span>
+        </div>
+
+        <h1 class="auth-heading">Create your account</h1>
+        <p class="auth-subheading">Start tracking your fitness journey today.</p>
+
+        {% if registrationForm.vars.errors|length > 0 %}
+            <div class="alert alert-error" role="alert">
+                Please fix the errors below and try again.
+            </div>
+        {% endif %}
+
+        {{ form_start(registrationForm, { attr: { class: 'auth-form', novalidate: 'novalidate' } }) }}
+            <div class="form-group">
+                <label class="form-label" for="{{ registrationForm.name.vars.id }}">Full Name</label>
+                {{ form_widget(registrationForm.name, { attr: { class: 'form-input' } }) }}
+                {{ form_errors(registrationForm.name) }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ registrationForm.email.vars.id }}">Email Address</label>
+                {{ form_widget(registrationForm.email, { attr: { class: 'form-input' } }) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ registrationForm.plainPassword.first.vars.id }}">Password</label>
+                {{ form_widget(registrationForm.plainPassword.first, { attr: { class: 'form-input' } }) }}
+                {{ form_errors(registrationForm.plainPassword.first) }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ registrationForm.plainPassword.second.vars.id }}">Confirm Password</label>
+                {{ form_widget(registrationForm.plainPassword.second, { attr: { class: 'form-input' } }) }}
+                {{ form_errors(registrationForm.plainPassword.second) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        {{ form_end(registrationForm) }}
+
+        <div class="auth-footer">
+            <div class="form-divider"><span>already have an account?</span></div>
+            <a href="{{ path('app_login') }}" class="btn btn-secondary">Sign In</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

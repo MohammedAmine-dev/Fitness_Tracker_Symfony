@@ -18,55 +18,64 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-#[Route('/diary', name:'diary')]
+#[Route('/diary')]
 class DiaryController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $em) {}
+
     #[Route('', name: 'app_diary', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $selectedDate = $request->query->get('date', date('Y-m-d'));
-        $date         = new \DateTime($selectedDate);
-        $user         = $this->getUser();
 
+        // On crée les deux types de dates pour satisfaire Doctrine
+        $dateImmutable = new \DateTimeImmutable($selectedDate);
+        $dateMutable   = new \DateTime($selectedDate);
+
+        $user = $this->getUser();
+
+        // Les entités classiques utilisent la date mutable
         $meals = $this->em->getRepository(Meal::class)->findBy(
-            ['user' => $user, 'date' => $date],
+            ['user' => $user, 'date' => $dateMutable],
             ['mealType' => 'ASC']
         );
 
-        $exercises = $this->em->getRepository(ExerciseLog::class)->findBy(
-            ['user' => $user, 'date' => $date]
-        );
-
         $notes = $this->em->getRepository(DiaryNote::class)->findBy(
-            ['user' => $user, 'date' => $date],
+            ['user' => $user, 'date' => $dateMutable],
             ['createdAt' => 'DESC']
         );
 
-        $water       = $this->em->getRepository(WaterIntake::class)->findOneBy(['user' => $user, 'date' => $date]);
+        $water = $this->em->getRepository(WaterIntake::class)->findOneBy([
+            'user' => $user, 'date' => $dateMutable
+        ]);
         $waterGlasses = $water?->getGlasses() ?? 0;
 
-        $totalCal   = array_sum(array_map(fn(Meal $m) => $m->getCalories(), $meals));
-        $totalPro   = array_sum(array_map(fn(Meal $m) => $m->getProtein(), $meals));
-        $totalCarbs = array_sum(array_map(fn(Meal $m) => $m->getCarbs(), $meals));
-        $totalFat   = array_sum(array_map(fn(Meal $m) => $m->getFat(), $meals));
+        // ExerciseLog est la seule entité qui utilise la date immuable
+        $exercises = $this->em->getRepository(ExerciseLog::class)->findBy(
+            ['user' => $user, 'date' => $dateImmutable]
+        );
+
+        $totalCal    = array_sum(array_map(fn(Meal $m) => $m->getCalories(), $meals));
+        $totalPro    = array_sum(array_map(fn(Meal $m) => $m->getProtein(), $meals));
+        $totalCarbs  = array_sum(array_map(fn(Meal $m) => $m->getCarbs(), $meals));
+        $totalFat    = array_sum(array_map(fn(Meal $m) => $m->getFat(), $meals));
         $totalBurned = array_sum(array_map(fn(ExerciseLog $e) => $e->getCaloriesBurned(), $exercises));
 
-        // Group meals by type
+        // Grouper les repas par type
         $grouped = [];
         foreach ($meals as $meal) {
             $grouped[$meal->getMealType()][] = $meal;
         }
 
-        // Forms
+        // Formulaires
         $mealForm     = $this->createForm(MealType::class, null, ['action' => $this->generateUrl('app_diary_add_meal')]);
         $exerciseForm = $this->createForm(ExerciseLogType::class, null, ['action' => $this->generateUrl('app_diary_add_exercise')]);
 
         return $this->render('index.html.twig', [
             'selected_date' => $selectedDate,
-            'display_date'  => $date->format('l, F j Y'),
-            'prev_date'     => (clone $date)->modify('-1 day')->format('Y-m-d'),
-            'next_date'     => (clone $date)->modify('+1 day')->format('Y-m-d'),
+            'display_date'  => $dateImmutable->format('l, F j Y'),
+            'prev_date'     => (clone $dateImmutable)->modify('-1 day')->format('Y-m-d'),
+            'next_date'     => (clone $dateImmutable)->modify('+1 day')->format('Y-m-d'),
             'today'         => date('Y-m-d'),
             'grouped_meals' => $grouped,
             'exercises'     => $exercises,
@@ -78,8 +87,8 @@ class DiaryController extends AbstractController
             'total_fat'     => $totalFat,
             'total_burned'  => $totalBurned,
             'goal_cal'      => 2200,
-            'mealForm'         => $mealForm->createView(),
-            'exerciseForm'     => $exerciseForm->createView(),
+            'mealForm'      => $mealForm->createView(),
+            'exerciseForm'  => $exerciseForm->createView(),
         ]);
     }
 
@@ -92,7 +101,7 @@ class DiaryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $date = $request->request->get('date', date('Y-m-d'));
-            $meal->setUser($this->getUser()); // <-- Corrigé
+            $meal->setUser($this->getUser());
             $meal->setDate(new \DateTime($date));
             $this->em->persist($meal);
             $this->em->flush();
@@ -113,7 +122,7 @@ class DiaryController extends AbstractController
     {
         $meal = $this->em->getRepository(Meal::class)->find($id);
 
-        if (!$meal || $meal->getUser() !== $this->getUser()) { // <-- Corrigé
+        if (!$meal || $meal->getUser() !== $this->getUser()) {
             return $this->json(['success' => false], 403);
         }
 
@@ -132,8 +141,9 @@ class DiaryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $date = $request->request->get('date', date('Y-m-d'));
-            $exercise->setUser($this->getUser()); // <-- Déjà bon
-            $exercise->setDate(new \DateTime($date));
+            $exercise->setUser($this->getUser());
+            // CORRECTION: Utilisation de DateTimeImmutable pour l'exercice
+            $exercise->setDate(new \DateTimeImmutable($date));
             $this->em->persist($exercise);
             $this->em->flush();
 
@@ -153,7 +163,7 @@ class DiaryController extends AbstractController
     {
         $exercise = $this->em->getRepository(ExerciseLog::class)->find($id);
 
-        if (!$exercise || $exercise->getUser() !== $this->getUser()) { // <-- Corrigé
+        if (!$exercise || $exercise->getUser() !== $this->getUser()) {
             return $this->json(['success' => false], 403);
         }
 

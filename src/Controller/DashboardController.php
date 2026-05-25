@@ -11,7 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-#[Route('/dashboard', name:'dashboard')]class DashboardController extends AbstractController
+#[Route('/dashboard')]
+class DashboardController extends AbstractController
 {
     public function __construct(
         private readonly MealRepository         $mealRepository,

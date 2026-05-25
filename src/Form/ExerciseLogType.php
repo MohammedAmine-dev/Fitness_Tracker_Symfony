@@ -15,7 +15,7 @@ class ExerciseLogType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('exercise', EntityType::class, [
+            ->add('name', EntityType::class, [
                 'class' => Exercise::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Choose an exercise',

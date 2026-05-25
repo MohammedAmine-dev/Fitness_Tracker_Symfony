@@ -39,15 +39,15 @@
 <aside class="sidebar">
     <nav class="sidebar__nav">
         <span class="sidebar__section-title">Menu</span>
-        <a href="{{  path("dashboard") }}" class="sidebar__link {% block active_dashboard %}{% endblock %}">
+        <a href="{{  path("app_dashboard") }}" class="sidebar__link {% block active_dashboard %}{% endblock %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
             Dashboard
         </a>
-        <a href="{{ path("Diary") }}" class="sidebar__link {% block active_diary %}{% endblock %}">
+        <a href="{{ path("app_diary") }}" class="sidebar__link {% block active_diary %}{% endblock %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             Diary
         </a>
-        <a href="{{ path("") }}" class="sidebar__link {% block active_food %}{% endblock %}">
+        <a href="{{ path("app_food") }}" class="sidebar__link {% block active_food %}{% endblock %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
             Food
         </a>
